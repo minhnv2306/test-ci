@@ -1,24 +1,17 @@
 name: VOICHAT CI&CD
 
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+on: push
 
 jobs:
   chatwork-notification:
     runs-on: ubuntu-latest
 
     steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
-
-    - name: Send notification via chatwork
+    - name: Chatwork
       run: |
         curl \
-          -X POST "https://api.chatwork.com/v2/rooms/${CHATWORK_ROOM_ID}/messages" \
-          -H "X-ChatWorkToken: ${CHATWORK_API_TOKEN}" \
+          -X POST "https://api.chatwork.com/v2/rooms/${{ vars.CHATWORK_ROOM_ID }}/messages" \
+          -H "X-ChatWorkToken: ${{ vars.CHATWORK_API_TOKEN }}" \
           -d <<-EOS "body=
           [info][title]VOICHAT[/title]
           ${GITHUB_REF}
@@ -26,3 +19,4 @@ jobs:
           ${{ github.event.head_commit.message }}
           ${GITHUB_SHA}
           [/info]"
+          EOS
